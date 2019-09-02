@@ -1,0 +1,32 @@
+#container {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  height: 100vh;
+  border-style: solid;
+  border-color: var(--white);
+  border-width: 0 2px 0 0;
+}
+
+.divider { 
+  background: white;
+  height: 2px;
+}
+
+.tabLink, .tabLink:visited {
+  padding: 20px;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: 'Montserrat', serif;
+  font-weight: bold;
+  font-size: 28px;
+  transition: 0.1s ease-in;
+}
+
+.tabLink:hover {
+  color: var(--accentColor);
+}
+
+.tabLinkActive {
+  background: var(--white);
+}
