@@ -8,12 +8,13 @@
   border-width: 0 2px 0 0;
 }
 
-.divider { 
+.divider {
   background: white;
   height: 2px;
 }
 
-.tabLink, .tabLink:visited {
+.tabLink,
+.tabLink:visited {
   padding: 20px;
   cursor: pointer;
   text-decoration: none;
@@ -29,4 +30,5 @@
 
 .tabLinkActive {
   background: var(--white);
+  color: var(--primaryColor);
 }

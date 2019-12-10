@@ -1,25 +1,28 @@
-import React from 'react';
-import {NavLink} from 'react-router-dom'
-import styles from './index.module.css';
+import React from 'react'
+import { NavLink } from 'react-router-dom'
+import styles from './index.module.css'
 
-const Tab = ({label, path}) => (
+const Tab = ({ label, path }) => (
   <>
     <NavLink
+      exact
       to={path}
       className={styles.tabLink}
-      activeStyle={{color: 'var(--secondaryColor)', background: 'var(--white)'}}
+      activeClassName={styles.tabLinkActive}
+      // activeStyle={{ color: 'var(--secondaryColor)', background: 'var(--white)' }}
     >
       {label}
     </NavLink>
-    <div className={styles.divider}/>
+    <div className={styles.divider} />
   </>
-);
+)
 
 const TabNav = () => (
   <div id={styles.container}>
-    <Tab label='Map' path='/admin/map'/>
-    <Tab label='Accounts' path='/admin/accounts'/>
+    <Tab label='Home' path='/' />
+    <Tab label='Accounts' path='/accounts' />
+    <Tab label='Applications' path='/applications' />
   </div>
-);
+)
 
-export default TabNav;
+export default TabNav

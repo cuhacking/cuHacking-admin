@@ -1,10 +1,21 @@
-import React from 'react';
-import {Page} from 'components';
+import React from 'react'
+import { Page } from 'components'
+import useDatabase from 'hooks/useDatabase'
 
-const Home = () => (
-  <Page>
-    <h1>cuHacking Admin Console</h1>
-  </Page>
-);
+const Home = () => {
+  const [database, update, loading] = useDatabase()
 
-export default Home;
+  return (
+    <Page>
+      <h1>cuHacking Admin Console: stats</h1>
+      <div>
+        <button type='button' onClick={update}>
+          Fetch
+        </button>
+        {loading}
+      </div>
+    </Page>
+  )
+}
+
+export default Home

@@ -1,5 +1,5 @@
-import Home from './home';
-import AccountManager from './accountManager';
-import MapEditor from './mapEditor';
+import Home from './home'
+import Accounts from './accounts'
+import Applications from './applications'
 
-export {Home, AccountManager, MapEditor};
+export { Home, Accounts, Applications }

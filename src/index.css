@@ -1,10 +1,10 @@
 * {
-  --white: #FFFFFF;
+  --white: #ffffff;
   --black: #111111;
-  --primaryColor: #9756D8;
-  --secondaryColor: #5827B8;
-  --accentColor: #00D0FE;
-  --darkColor: #10021F;
+  --primaryColor: #9756d8;
+  --secondaryColor: #5827b8;
+  --accentColor: #00d0fe;
+  --darkColor: #10021f;
 }
 
 body {
@@ -22,7 +22,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-a, a:visited{
+a {
   text-decoration: none;
   color: var(--white);
 }
