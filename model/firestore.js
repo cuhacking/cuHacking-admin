@@ -15,32 +15,45 @@ Firestore.getCollection = async collection => {
 }
 
 Firestore.uploadApplications = async applications => {
-  let userRefs = []
+  let batch = fb.batch()
 
-  await fb.runTransaction(async t => {
-    const appDocs = applications.map(app => {
-      let ref = fb.collection('Users').doc(app.uid)
-      userRefs.push(ref)
-      return t.get(ref)
-    })
-
-    await Promise.all(appDocs)
-
-    appDocs.forEach((docPromise, i) => {
-      docPromise.then(doc => {
-        let oldApplication = doc.get('application')
-        let updatedApplication = {
-          ...oldApplication,
-          longAnswerScore: applications[i].score,
-          status: 'inReview'
-        }
-
-        t.update(userRefs[i], {
-          application: updatedApplication
-        })
-      })
+  applications.forEach(app => {
+    let userRef = fb.collection('Users').doc(app.uid)
+    batch.update(userRef, {
+      review: {
+        longAnswerScore: app.score
+      },
+      appStatus: 'inReview'
     })
   })
+  return batch.commit()
 
-  logger.verbose('Transaction success!')
+  // let userRefs = []
+
+  // await fb.runTransaction(async t => {
+  //   const appDocs = applications.map(app => {
+  //     let ref = fb.collection('Users').doc(app.uid)
+  //     userRefs.push(ref)
+  //     return t.get(ref)
+  //   })
+
+  //   await Promise.all(appDocs)
+
+  //   appDocs.forEach((docPromise, i) => {
+  //     docPromise.then(doc => {
+  //       let oldApplication = doc.get('application')
+  //       let updatedApplication = {
+  //         ...oldApplication,
+  //         longAnswerScore: applications[i].score,
+  //         status: 'inReview'
+  //       }
+
+  //       t.update(userRefs[i], {
+  //         application: updatedApplication
+  //       })
+  //     })
+  //   })
+  // })
+
+  // logger.verbose('Transaction success!')
 }
