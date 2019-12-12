@@ -7,16 +7,20 @@ const firebase = require('firebase/app')
 
 const { logger, stringify } = require('./helpers/logger')
 const Firestore = require('./model/firestore')
+const applications = require('./routes/applications')
 const stats = require('./routes/stats')
 
 const env = process.env.PROD ? 'production' : 'development'
 const config = require('./config.json')[env]
 const serviceAccount = require('./' + config.firebase_key_file)
 
+// Allow the server to parse JSON
+app.use(express.json())
+
 // Log each request the server receives
 app.use('*', (req, res, next) => {
   logger.info(`HTTP request received: ${req.method} -> ${req.originalUrl}`)
-  if (req.method !== 'GET') logger.debug(`Request Body: ${req.body}`)
+  if (req.method !== 'GET') logger.debug(`Request Body: ${stringify(req.body)}`)
   next()
 })
 
@@ -43,6 +47,7 @@ app.get(/^\/(?!api).*/, (req, res) => {
 
 // Backend routes
 const backendRouter = express.Router()
+backendRouter.use('/applications', applications)
 backendRouter.use('/stats', stats)
 
 app.use('/api', backendRouter)
