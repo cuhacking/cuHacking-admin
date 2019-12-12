@@ -5,9 +5,26 @@ const app = express()
 const admin = require('firebase-admin')
 const firebase = require('firebase/app')
 
+const { logger, stringify } = require('./helpers/logger')
+const Firestore = require('./model/firestore')
+const stats = require('./routes/stats')
+
 const env = process.env.PROD ? 'production' : 'development'
 const config = require('./config.json')[env]
 const serviceAccount = require('./' + config.firebase_key_file)
+
+// Log each request the server receives
+app.use('*', (req, res, next) => {
+  logger.info(`HTTP request received: ${req.method} -> ${req.originalUrl}`)
+  if (req.method !== 'GET') logger.debug(`Request Body: ${req.body}`)
+  next()
+})
+
+// Log all errors
+app.use((error, req, res, next) => {
+  logger.error(`Express error: ${stringify(error)}`)
+  res.sendStatus(error.status || 500)
+})
 
 // Initialize Firebase admin SDK
 admin.initializeApp({
@@ -15,16 +32,22 @@ admin.initializeApp({
   databaseURL: 'https://cuhacking-dev.firebaseio.com'
 })
 
-// Use client files
+// Initializing firestore
+Firestore.init(admin)
+
+// Frontend
 app.use(express.static(path.join(__dirname, './client/build')))
-app.get('*', (req, res) => {
+app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, './client/build/index.html'))
 })
 
+// Backend routes
 const backendRouter = express.Router()
+backendRouter.use('/stats', stats)
+
 app.use('/api', backendRouter)
 
 const port = process.env.PORT || 3000
 app.listen(port)
 
-console.log(`Admin console is listening on port ${port}${process.env.DEV ? ' in development mode.' : '.'}`)
+logger.info(`Admin console is listening on port ${port}${process.env.DEV ? ' in development mode.' : '.'}`)

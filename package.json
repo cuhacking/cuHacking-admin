@@ -6,12 +6,13 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "yarn --cwd ./client build",
-    "dev": "node index.js",
-    "start": "PROD=true node index.js"
+    "start": "node index.js",
+    "prod": "PROD=true node index.js"
   },
   "dependencies": {
     "express": "^4.17.1",
     "firebase": "^7.5.2",
-    "firebase-admin": "^8.8.0"
+    "firebase-admin": "^8.8.0",
+    "winston": "^3.2.1"
   }
 }
