@@ -1,35 +1,47 @@
 import React, { useEffect, useState } from 'react'
-import * as firebase from 'firebase/app'
-import { useCollection } from 'react-firebase-hooks/firestore'
 import { Page } from 'components'
+import useUsers from 'hooks/useUsers'
 
 const Home = () => {
-  const [values, loading, error] = useCollection(firebase.firestore().collection('Users'))
-  const [stats, setStats] = useState({})
+  const users = useUsers()
+  const [applications, setApps] = useState({})
+  const [answers, setAnswers] = useState({})
 
   useEffect(() => {
     let sts = {}
-    if (!loading) {
-      let docs = values.docs.map(doc => doc.data())
-      docs.forEach(user => {
-        if (sts[user.application.status]) {
-          sts[user.application.status]++
-        } else {
-          sts[user.application.status] = 1
-        }
-      })
-      setStats(sts)
+    let longAnswer = {
+      accomplishment: 0,
+      challenge: 0
     }
-  }, [loading, values])
+    users.forEach(user => {
+      if (sts[user.application.status]) {
+        sts[user.application.status]++
+      } else {
+        sts[user.application.status] = 1
+      }
+
+      if (user.application.status === 'submitted') {
+        longAnswer.accomplishment += user.application.skills.accomplishmentStatement ? 1 : 0
+        longAnswer.challenge += user.application.skills.challengeStatement ? 1 : 0
+      }
+    })
+    setApps(sts)
+    setAnswers(longAnswer)
+  }, [users])
 
   return (
     <Page>
       <h1>cuHacking Admin Console</h1>
-      {Object.keys(stats).map(status => (
+      {Object.keys(applications).map(status => (
         <p key={status}>
-          {status}: {stats[status]}
+          {status}: {applications[status]}
         </p>
       ))}
+      <p>
+        accomplishmentStatement: {answers.accomplishment}
+        <br />
+        challengeStatement: {answers.challenge}
+      </p>
     </Page>
   )
 }
