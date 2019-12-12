@@ -4,6 +4,11 @@
   "main": "index.js",
   "repository": "git@github.com:cuhacking/cuHacking-admin.git",
   "license": "Apache-2.0",
+  "scripts": {
+    "build": "yarn --cwd ./client build",
+    "dev": "node index.js",
+    "start": "PROD=true node index.js"
+  },
   "dependencies": {
     "express": "^4.17.1",
     "firebase": "^7.5.2",
