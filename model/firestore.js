@@ -14,7 +14,20 @@ Firestore.getCollection = async collection => {
   return snapshot.docs.map(doc => doc.data())
 }
 
+// Dangerous Action! Don't use
+Firestore.setDocuments = async collection => {
+  let batch = fb.batch()
+
+  collection.forEach(doc => {
+    let docRef = fb.collection('Users').doc(doc.uid)
+    batch.update(docRef, doc)
+  })
+  return batch.commit()
+}
+
+// For one time use
 Firestore.uploadApplications = async applications => {
+  logger.verbose('Starting batch')
   let batch = fb.batch()
 
   applications.forEach(app => {
@@ -26,6 +39,8 @@ Firestore.uploadApplications = async applications => {
       appStatus: 'inReview'
     })
   })
+
+  logger.verbose('Batch complete')
   return batch.commit()
 
   // let userRefs = []

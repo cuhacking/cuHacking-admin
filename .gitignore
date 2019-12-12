@@ -7,7 +7,7 @@ node_modules/
 
 # testing
 /coverage
-firestore-*.json
+firebase-admin-*.json
 
 # production
 build/

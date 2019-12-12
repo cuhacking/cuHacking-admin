@@ -7,7 +7,7 @@ StatsController.calculate = async (req, res) => {
   logger.info('Calculating stats')
 
   const users = await Firestore.getCollection('Users')
-  const stats = {
+  const applicationStatuses = {
     unstarted: 0,
     unfinished: 0,
     submitted: 0,
@@ -20,5 +20,5 @@ StatsController.calculate = async (req, res) => {
   users.forEach(user => stats[user.application.status]++)
 
   logger.info('Stats calculated')
-  res.status(200).send(stats)
+  res.status(200).send({ applicationStatuses })
 }
