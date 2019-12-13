@@ -15,15 +15,15 @@ Firestore.getCollection = async collection => {
 }
 
 // Dangerous Action! Don't use
-Firestore.setDocuments = async collection => {
-  let batch = fb.batch()
+// Firestore.setDocuments = async collection => {
+//   let batch = fb.batch()
 
-  collection.forEach(doc => {
-    let docRef = fb.collection('Users').doc(doc.uid)
-    batch.update(docRef, doc)
-  })
-  return batch.commit()
-}
+//   collection.forEach(doc => {
+//     let docRef = fb.collection('Users').doc(doc.uid)
+//     batch.set(docRef, doc)
+//   })
+//   return batch.commit()
+// }
 
 // For one time use
 Firestore.uploadApplications = async applications => {
