@@ -3,6 +3,6 @@ const router = express.Router()
 
 const ApplicationController = require('../controllers/applicationController.js')
 
-router.put('/', ApplicationController.upload)
+router.post('/legacy', ApplicationController.upload)
 
 module.exports = router

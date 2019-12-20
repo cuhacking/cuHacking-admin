@@ -25,7 +25,9 @@ Firestore.getCollection = async collection => {
 //   return batch.commit()
 // }
 
-// For one time use
+/**
+ * [LEGACY] Upload application review JSON
+ */
 Firestore.uploadApplications = async applications => {
   logger.verbose('Starting batch')
   let batch = fb.batch()
@@ -34,6 +36,7 @@ Firestore.uploadApplications = async applications => {
     let userRef = fb.collection('Users').doc(app.uid)
     batch.update(userRef, {
       review: {
+        wave: 1,
         longAnswerScore: app.score
       },
       appStatus: 'inReview'

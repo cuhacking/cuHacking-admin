@@ -3,14 +3,14 @@ const path = require('path')
 const app = express()
 
 const admin = require('firebase-admin')
+const serviceAccount = require('./firebase-admin.json')
+const { init: initFirestore } = require('./model/firestore')
 
 const { logger, stringify } = require('./helpers/logger')
-const Firestore = require('./model/firestore')
 const { applications, stats, users } = require('./routes')
 
 const env = process.env.PROD ? 'production' : 'development'
 const config = require('./config.json')[env]
-const serviceAccount = require('./' + config.firebase_key_file)
 
 // Allow the server to parse JSON
 app.use(express.json({ limit: '50mb' }))
@@ -31,11 +31,12 @@ app.use((error, req, res, next) => {
 // Initialize Firebase admin SDK
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://cuhacking-dev.firebaseio.com'
+  databaseURL: config.firebaseUrl,
+  databaseAuthVariableOverride: 'cuhacking-admin'
 })
 
 // Initializing firestore
-Firestore.init(admin)
+initFirestore(admin)
 
 // Frontend
 app.use(express.static(path.join(__dirname, './client/build')))
@@ -46,7 +47,7 @@ app.get(/^\/(?!api).*/, (req, res) => {
 // Backend routes
 const backendRouter = express.Router()
 backendRouter.use('/applications', applications)
-backendRouter.use('/stats', stats)
+// backendRouter.use('/stats', stats)
 backendRouter.use('/users', users)
 
 app.use('/api', backendRouter)
