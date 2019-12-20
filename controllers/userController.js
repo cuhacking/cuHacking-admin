@@ -3,12 +3,30 @@ const Firestore = require('../model/firestore.js')
 
 const UserController = module.exports
 
-UserController.getAll = async (req, res) => {
-  logger.verbose('Getting all users')
-  const users = await Firestore.getCollection('Users')
+UserController.getAll = async (req, res, next) => {
+  try {
+    logger.verbose('Getting all users...')
+    const users = await Firestore.getCollection('Users')
 
-  logger.verbose('Users retrieved')
-  res.status(200).send({ users })
+    logger.verbose('Users retrieved')
+    res.status(200).send({ users })
+  } catch (error) {
+    logger.error('Error retrieving users')
+    next(error)
+  }
+}
+
+UserController.getByUuid = async (req, res, next) => {
+  try {
+    logger.verbose(`Getting user with uuid ${req.params.uuid}...`)
+    const user = await Firestore.getDocument('Users', req.params.uuid)
+
+    logger.verbose('Retrieved user')
+    return res.status(200).send({ user })
+  } catch (error) {
+    logger.error('Error retrieving user')
+    next(error)
+  }
 }
 
 // const APPLICATION_SCHEMA = {

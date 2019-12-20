@@ -14,6 +14,14 @@ Firestore.getCollection = async collection => {
   return snapshot.docs.map(doc => doc.data())
 }
 
+Firestore.getDocument = async (collection, id) => {
+  const document = await fb
+    .collection(collection)
+    .doc(id)
+    .get()
+  return document.data()
+}
+
 // Dangerous Action! Don't use
 // Firestore.setDocuments = async collection => {
 //   let batch = fb.batch()
