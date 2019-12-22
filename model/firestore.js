@@ -76,6 +76,12 @@ Firestore.queryUsers = async constraints => {
   return users
 }
 
+Firestore.setStatus = (uuid, appStatus) => {
+  fb.collection('Users')
+    .doc(uuid)
+    .update({ appStatus })
+}
+
 /**
  * [LEGACY] Upload application review JSON
  */
