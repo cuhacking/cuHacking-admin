@@ -3,9 +3,8 @@ const router = express.Router()
 
 const UserController = require('../controllers/userController.js')
 
-router.get('/', UserController.getAll)
+router.get('/', UserController.getByQuery)
 router.get('/:uuid', UserController.getByUuid)
 // router.post('/', UserController.applyBackup)
-// router.post('/script', UserController.runScript)
 
 module.exports = router

@@ -22,16 +22,59 @@ Firestore.getDocument = async (collection, id) => {
   return document.data()
 }
 
-// Dangerous Action! Don't use
-// Firestore.setDocuments = async collection => {
-//   let batch = fb.batch()
+Firestore.queryUsers = async constraints => {
+  // Getting all users
+  let users = (await fb.collection('Users').get()).docs.map(doc => doc.data())
 
-//   collection.forEach(doc => {
-//     let docRef = fb.collection('Users').doc(doc.uid)
-//     batch.set(docRef, doc)
-//   })
-//   return batch.commit()
-// }
+  constraints.forEach(({ field, value }) => {
+    switch (field) {
+      case 'appStatus':
+        users = users.filter(user => user.appStatus === value)
+        break
+      case 'gender':
+        users = users.filter(user => user.application.basicInfo.gender === value)
+        break
+      case 'cityOfOrigin':
+        users = users.filter(user => user.application.personalInfo.cityOfOrigin.includes(value))
+        break
+      case 'glutenFree':
+        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.glutenFree === true)
+        break
+      case 'halal':
+        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.halal === true)
+        break
+      case 'lactoseFree':
+        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.lactoseFree === true)
+        break
+      case 'nutFree':
+        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.nutFree === true)
+        break
+      case 'otherDiet':
+        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.other)
+        break
+      case 'vegetarian':
+        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.vegetarian === true)
+        break
+      case 'school':
+        users = users.filter(user => user.application.personalInfo.school === value)
+        break
+      case 'wantsShuttle':
+        users = users.filter(user => user.application.personalInfo.wantsShuttle === true)
+        break
+      case 'under18':
+        users = users.filter(user => user.application.terms.under18 === true)
+        break
+      case 'wave':
+        users = users.filter(user => user.review.wave == value)
+        break
+      case 'longAnswerScore':
+        users = users.filter(user => user.review.longAnswerScore == value)
+        break
+    }
+  })
+
+  return users
+}
 
 /**
  * [LEGACY] Upload application review JSON
@@ -83,3 +126,14 @@ Firestore.uploadApplications = async applications => {
 
   // logger.verbose('Transaction success!')
 }
+
+// Dangerous Action! Don't use
+// Firestore.setDocuments = async collection => {
+//   let batch = fb.batch()
+
+//   collection.forEach(doc => {
+//     let docRef = fb.collection('Users').doc(doc.uid)
+//     batch.set(docRef, doc)
+//   })
+//   return batch.commit()
+// }
