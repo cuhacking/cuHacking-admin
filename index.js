@@ -56,5 +56,5 @@ const port = process.env.PORT || 3000
 app.listen(port)
 
 logger.info(
-  `Admin console is listening on port ${port}${process.env.PROD ? ' in production mode.' : ' in development mode'}.`
+  `Admin console is listening on port ${port}${process.env.PROD ? ' in production mode' : ' in development mode'}.`
 )

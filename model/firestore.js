@@ -22,6 +22,22 @@ Firestore.getDocument = async (collection, id) => {
   return document.data()
 }
 
+Firestore.getByEmail = async email => {
+  const query = await fb
+    .collection('Users')
+    .where('email', '==', email)
+    .get()
+
+  if (query.length > 1) {
+    throw new Error({
+      message: 'Email matches more than one user.',
+      query: query.forEach(doc => doc.data())
+    })
+  }
+
+  return query[0].data()
+}
+
 Firestore.queryUsers = async constraints => {
   // Getting all users
   let users = (await fb.collection('Users').get()).docs.map(doc => doc.data())

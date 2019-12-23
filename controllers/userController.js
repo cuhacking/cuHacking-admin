@@ -31,26 +31,34 @@ UserController.getByQuery = async (req, res, next) => {
       logger.verbose('Users retrieved')
       res.status(200).send({ users })
     } else {
-      logger.verbose(`Querying for users...`)
+      if (req.query.email) {
+        logger.verbose(`Getting user with email ${req.query.email}`)
+        const user = await Firestore.getByEmail(req.query.email)
 
-      // Check if all the fields are queryable
-      fields.forEach(field => {
-        if (!validQueryFields.includes(field)) {
-          throw new Error(`Invalid query field: ${field}`)
-        }
-      })
+        logger.verbose('User retrieved!')
+        return res.status(200).send({ user })
+      } else {
+        logger.verbose('Querying for users...')
 
-      const users = await Firestore.queryUsers(
-        fields.map(field => {
-          return {
-            field,
-            value: req.query[field]
+        // Check if all the fields are queryable
+        fields.forEach(field => {
+          if (!validQueryFields.includes(field)) {
+            throw new Error(`Invalid query field: ${field}`)
           }
         })
-      )
 
-      logger.verbose('Query complete')
-      res.status(200).send({ users })
+        const users = await Firestore.queryUsers(
+          fields.map(field => {
+            return {
+              field,
+              value: req.query[field]
+            }
+          })
+        )
+
+        logger.verbose('Query complete')
+        return res.status(200).send({ users })
+      }
     }
   } catch (error) {
     logger.error('Error retrieving users')
