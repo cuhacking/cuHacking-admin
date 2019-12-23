@@ -1,11 +1,11 @@
 import React from 'react'
 import { Page } from 'components'
 
-const Accounts = () => (
+const Users = () => (
   <Page>
-    <h1>Accounts</h1>
+    <h1>Users</h1>
     <p>WIP</p>
   </Page>
 )
 
-export default Accounts
+export default Users

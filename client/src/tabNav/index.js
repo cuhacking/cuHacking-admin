@@ -20,8 +20,8 @@ const Tab = ({ label, path }) => (
 const TabNav = () => (
   <div id={styles.container}>
     <Tab label='Home' path='/' />
-    <Tab label='Accounts' path='/accounts' />
-    <Tab label='Applications' path='/applications' />
+    <Tab label='Users' path='/users' />
+    <Tab label='Admittance' path='/admittance' />
   </div>
 )
 
