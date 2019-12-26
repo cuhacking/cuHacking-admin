@@ -28,14 +28,16 @@ Firestore.getByEmail = async email => {
     .where('email', '==', email)
     .get()
 
-  if (query.length > 1) {
+  if (query.docs.length > 1) {
     throw new Error({
       message: 'Email matches more than one user.',
       query: query.forEach(doc => doc.data())
     })
+  } else if (query.docs.length === 0) {
+    return
   }
 
-  return query[0].data()
+  return query.docs[0].data()
 }
 
 Firestore.queryUsers = async constraints => {

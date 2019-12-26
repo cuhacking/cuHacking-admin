@@ -35,6 +35,11 @@ UserController.getByQuery = async (req, res, next) => {
         logger.verbose(`Getting user with email ${req.query.email}`)
         const user = await Firestore.getByEmail(req.query.email)
 
+        if (!user) {
+          logger.warn(`User with email ${email} not found`)
+          res.sendStatus(404)
+        }
+
         logger.verbose('User retrieved!')
         return res.status(200).send({ user })
       } else {
