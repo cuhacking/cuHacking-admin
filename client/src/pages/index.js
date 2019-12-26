@@ -1,6 +1,6 @@
 import Home from './home'
-import Admittance from './admittance'
 import Users from './users'
-// import Applications from './applications'
+import Admittance from './admittance'
+import Stats from './stats'
 
-export { Home, Admittance, Users }
+export { Home, Users, Admittance, Stats }
