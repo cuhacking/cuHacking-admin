@@ -53,34 +53,36 @@ Firestore.queryUsers = async constraints => {
         users = users.filter(user => user.application.basicInfo.gender === value)
         break
       case 'cityOfOrigin':
-        users = users.filter(user => user.application.personalInfo.cityOfOrigin.includes(value))
+        users = users.filter(user =>
+          user.application.personalInfo.cityOfOrigin.toLowerCase().includes(value.toLowerCase())
+        )
         break
       case 'glutenFree':
-        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.glutenFree === true)
+        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.glutenFree === value)
         break
       case 'halal':
-        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.halal === true)
+        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.halal === value)
         break
       case 'lactoseFree':
-        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.lactoseFree === true)
+        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.lactoseFree === value)
         break
       case 'nutFree':
-        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.nutFree === true)
+        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.nutFree === value)
         break
       case 'otherDiet':
         users = users.filter(user => user.application.personalInfo.dietaryRestrictions.other)
         break
       case 'vegetarian':
-        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.vegetarian === true)
+        users = users.filter(user => user.application.personalInfo.dietaryRestrictions.vegetarian === value)
         break
       case 'school':
         users = users.filter(user => user.application.personalInfo.school === value)
         break
       case 'wantsShuttle':
-        users = users.filter(user => user.application.personalInfo.wantsShuttle === true)
+        users = users.filter(user => user.application.personalInfo.wantsShuttle === value)
         break
       case 'under18':
-        users = users.filter(user => user.application.terms.under18 === true)
+        users = users.filter(user => user.application.terms.under18 === value)
         break
       case 'wave':
         users = users.filter(user => user.review.wave == value)

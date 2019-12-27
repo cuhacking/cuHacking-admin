@@ -48,7 +48,17 @@ UserController.getByQuery = async (req, res, next) => {
         // Check if all the fields are queryable
         fields.forEach(field => {
           if (!validQueryFields.includes(field)) {
-            throw new Error(`Invalid query field: ${field}`)
+            throw res.status(400).send({ message: `Invalid query field '${field}'` })
+          } else if (
+            field === 'glutenFree' ||
+            field === 'halal' ||
+            field === 'lactoseFree' ||
+            field === 'nutFree' ||
+            field === 'vegetarian' ||
+            field === 'wantsShuttle' ||
+            field === 'under18'
+          ) {
+            req.query[field] = req.query[field].toLowerCase() === 'true' ? true : false
           }
         })
 
