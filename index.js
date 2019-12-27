@@ -3,13 +3,13 @@ const path = require('path')
 const app = express()
 
 const admin = require('firebase-admin')
-const serviceAccount = require('./firebase-admin.json')
 const { init: initFirestore } = require('./model/firestore')
 
 const { logger, stringify } = require('./helpers/logger')
 const { applications, stats, users } = require('./routes')
 
 const env = process.env.PROD ? 'production' : 'development'
+const serviceAccount = process.env.PROD ? require('./firebase-admin-prod.json') : require('./firebase-admin-dev.json')
 const config = require('./config.json')[env]
 
 // Allow the server to parse JSON

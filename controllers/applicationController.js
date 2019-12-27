@@ -14,14 +14,17 @@ ApplicationController.admit = async (req, res, next) => {
     logger.verbose('User marked as accepted! Getting email address...')
     const { email } = await Firestore.getDocument('Users', uuid)
 
-    // logger.verbose('[DISABLED] Sending email...')
-    logger.verbose('Sending email...')
-    await got(`https://cuhacking.com/mail/users/${email}`, {
-      method: 'POST',
-      json: {
-        tags: ['accepted', '2020']
-      }
-    })
+    if (process.env.PROD) {
+      logger.verbose('Sending email...')
+      await got(`https://cuhacking.com/mail/users/${email}`, {
+        method: 'POST',
+        json: {
+          tags: ['accepted', '2020']
+        }
+      })
+    } else {
+      logger.verbose('[DISABLED] Sending email...')
+    }
 
     logger.verbose('Hacker admitted!')
     return res.sendStatus(200)
