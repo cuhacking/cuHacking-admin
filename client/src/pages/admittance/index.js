@@ -8,10 +8,25 @@ async function asyncForEach(array, callback) {
   }
 }
 
+// https://stackoverflow.com/a/6274381/9772104
+function shuffle(array) {
+  let j, x, i
+  let a = [...array] // modified to not mutate the argument
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1))
+    x = a[i]
+    a[i] = a[j]
+    a[j] = x
+  }
+  return a
+}
+
 const Admittance = () => {
   const [isOperating, setOperating] = useState(false)
-  const [ongoingOps, setOngoingOps] = useState(0)
-  const [totalOps, setTotalOps] = useState(0)
+  const [admitCapM, setAdmitCapM] = useState(0)
+  const [admitCapF, setAdmitCapF] = useState(0)
+  const [admitCapO, setAdmitCapO] = useState(0)
+
   const [loading, setLoading] = useState(false)
   const [wave, setWave] = useState(1)
   const [under18, setUnder18] = useState(false)
@@ -19,7 +34,7 @@ const Admittance = () => {
   const [users, setUsers] = useState([])
 
   const makeQuery = async event => {
-    event.preventDefault()
+    if (event) event.preventDefault()
 
     setLoading(true)
     const response = await fetch(
@@ -29,26 +44,23 @@ const Admittance = () => {
 
     setUsers(users)
     setLoading(false)
-    console.log(users)
   }
 
   const genderFilter = gender =>
     users.filter(user => {
       if (gender === 'Other') {
-        return (
-          user.application.basicInfo.gender === 'Prefer not to answer' || user.application.basicInfo.gender === 'Other'
-        )
+        return user.application.basicInfo.gender !== 'Male' && user.application.basicInfo.gender !== 'Female'
       } else {
         return user.application.basicInfo.gender === gender
       }
     })
 
-  const admitHackers = async () => {
-    setOperating(true)
-    setTotalOps(users.length)
-    setOngoingOps(0)
+  const admitHackers = async u => {
+    if (u.length === 0) return
 
-    await asyncForEach(users, async user => {
+    setOperating(true)
+
+    await asyncForEach(u, async user => {
       try {
         const response = await fetch(`${window.location.origin}/api/applications`, {
           method: 'POST',
@@ -60,7 +72,6 @@ const Admittance = () => {
           })
         })
 
-        setOngoingOps(ongoingOps + 1)
         if (response.status !== 200) {
           console.error('Invalid status code:', response.status, response.statusText)
         }
@@ -70,6 +81,7 @@ const Admittance = () => {
     })
 
     setOperating(false)
+    makeQuery()
   }
 
   return (
@@ -79,11 +91,11 @@ const Admittance = () => {
         <p>
           DO NOT CLICK AWAY
           <br />
-          Admitting hackers: ({ongoingOps}/{totalOps})
+          Admitting hackers...
         </p>
       ) : (
         <>
-          <button disabled={!users || users.length === 0} type='button' onClick={admitHackers}>
+          <button disabled={!users || users.length === 0} type='button' onClick={() => admitHackers(users)}>
             Admit all
           </button>
           <form onSubmit={makeQuery} style={{ display: 'flex', flexDirection: 'column', margin: '20px 0 50px 0' }}>
@@ -126,8 +138,59 @@ const Admittance = () => {
             <>
               <h3>Total: {users.length}</h3>
               <p>Male: {genderFilter('Male').length}</p>
+              <div style={{ margin: '0 0 15px' }}>
+                <input
+                  onChange={event => setAdmitCapM(event.target.value)}
+                  type='number'
+                  min={0}
+                  max={genderFilter('Male').length}
+                  disabled={!users || genderFilter('Male').length === 0}
+                  value={admitCapM}
+                />
+                <button
+                  disabled={!users || genderFilter('Male').length === 0}
+                  type='button'
+                  onClick={() => admitHackers(shuffle(genderFilter('Male')).slice(0, admitCapM))}
+                >
+                  Admit
+                </button>
+              </div>
               <p>Female: {genderFilter('Female').length}</p>
+              <div style={{ margin: '0 0 15px' }}>
+                <input
+                  onChange={event => setAdmitCapF(event.target.value)}
+                  type='number'
+                  min={0}
+                  max={genderFilter('Female').length}
+                  disabled={!users || genderFilter('Female').length === 0}
+                  value={admitCapF}
+                />
+                <button
+                  disabled={!users || genderFilter('Female').length === 0}
+                  type='button'
+                  onClick={() => admitHackers(shuffle(genderFilter('Female')).slice(0, admitCapF))}
+                >
+                  Admit
+                </button>
+              </div>
               <p>Other: {genderFilter('Other').length}</p>
+              <div style={{ margin: '0 0 15px' }}>
+                <input
+                  onChange={event => setAdmitCapO(event.target.value)}
+                  type='number'
+                  min={0}
+                  max={genderFilter('Other').length}
+                  disabled={!users || genderFilter('Other').length === 0}
+                  value={admitCapO}
+                />
+                <button
+                  disabled={!users || genderFilter('Other').length === 0}
+                  type='button'
+                  onClick={() => admitHackers(shuffle(genderFilter('Other')).slice(0, admitCapO))}
+                >
+                  Admit
+                </button>
+              </div>
             </>
           )}
         </>

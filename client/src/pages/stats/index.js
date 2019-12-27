@@ -68,9 +68,7 @@ const Stats = () => {
   const genderFilter = gender => users =>
     users.filter(user => {
       if (gender === 'Other') {
-        return (
-          user.application.basicInfo.gender === 'Prefer not to answer' || user.application.basicInfo.gender === 'Other'
-        )
+        return user.application.basicInfo.gender !== 'Male' && user.application.basicInfo.gender !== 'Female'
       } else {
         return user.application.basicInfo.gender === gender
       }
