@@ -11,11 +11,11 @@ ApplicationController.admit = async (req, res, next) => {
 
     await Firestore.setStatus(uuid, 'accepted')
 
-    logger.verbose('User marked as accepted! Getting email address...')
-    const { email } = await Firestore.getDocument('Users', uuid)
+    logger.verbose(`User ${uuid} marked as accepted! Getting email address...`)
+    const email = (await Firestore.getDocument('Users', uuid)).email.toLowerCase()
 
     if (process.env.PROD) {
-      logger.verbose('Sending email...')
+      logger.verbose(`Sending email to ${email}...`)
       await got(`https://cuhacking.com/mail/users/${email}`, {
         method: 'POST',
         json: {
@@ -23,7 +23,7 @@ ApplicationController.admit = async (req, res, next) => {
         }
       })
     } else {
-      logger.verbose('[DISABLED] Sending email...')
+      logger.verbose(`[DISABLED] Sending email to ${email}...`)
     }
 
     logger.verbose('Hacker admitted!')
