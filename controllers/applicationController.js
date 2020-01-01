@@ -37,13 +37,17 @@ ApplicationController.admit = async (req, res, next) => {
 ApplicationController.getSubmittedAppication = async (req, res, next) => {
   try {
     if (!req.query.wave) {
+      logger.verbose('Wave not indicated in query')
       return res.status(400).send('Must indicate wave in query')
     } else {
+      logger.verbose(`Getting a random application in wave ${req.query.wave}`)
       const user = await Firestore.getByStatus(req.query.wave, 'submitted')
 
       if (!user) {
+        logger.verbose('No more unreviewed applications in this wave')
         return res.status(404).send('No more unreviewed applications in this wave')
       } else {
+        logger.verbose('Application retrieved!')
         return res.status(200).json({
           uuid: user.uid,
           accomplishmentStatement: user.application.skills.accomplishmentStatement,
@@ -59,6 +63,13 @@ ApplicationController.getSubmittedAppication = async (req, res, next) => {
 
 ApplicationController.reviewApplication = async (req, res, next) => {
   try {
+    const { uuid, score, wave } = req.body
+    logger.verbose(`Submitting review for user ${uuid}`)
+
+    await Firestore.review(uuid, wave, score)
+
+    logger.verbose('Review submitted!')
+    return res.sendStatus(200)
   } catch (error) {
     logger.error('Failed to submit review')
     next(error)

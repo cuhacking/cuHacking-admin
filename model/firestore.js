@@ -120,6 +120,20 @@ Firestore.getByStatus = async (wave, status) => {
     return users[0]
   }
 }
+
+Firestore.review = async (uuid, wave, score) => {
+  await fb
+    .collection('Users')
+    .doc(uuid)
+    .update({
+      appStatus: 'inReview',
+      review: {
+        wave,
+        longAnswerScore: score
+      }
+    })
+}
+
 /**
  * [LEGACY] Upload application review JSON
  */
