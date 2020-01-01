@@ -34,6 +34,37 @@ ApplicationController.admit = async (req, res, next) => {
   }
 }
 
+ApplicationController.getSubmittedAppication = async (req, res, next) => {
+  try {
+    if (!req.query.wave) {
+      return res.status(400).send('Must indicate wave in query')
+    } else {
+      const user = await Firestore.getByStatus(req.query.wave, 'submitted')
+
+      if (!user) {
+        return res.status(404).send('No more unreviewed applications in this wave')
+      } else {
+        return res.status(200).json({
+          uuid: user.uid,
+          accomplishmentStatement: user.application.skills.accomplishmentStatement,
+          challengeStatement: user.application.skills.challengeStatement
+        })
+      }
+    }
+  } catch (error) {
+    logger.error('Failed to get submitted application')
+    next(error)
+  }
+}
+
+ApplicationController.reviewApplication = async (req, res, next) => {
+  try {
+  } catch (error) {
+    logger.error('Failed to submit review')
+    next(error)
+  }
+}
+
 /**
  * [LEGACY] Uploads a JSON containing an array of objects containing review scores
  * Success Codes: 200
