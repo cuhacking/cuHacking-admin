@@ -102,6 +102,38 @@ Firestore.setStatus = (uuid, appStatus) => {
     .update({ appStatus })
 }
 
+Firestore.getByStatus = async (wave, status) => {
+  const query = await fb
+    .collection('Users')
+    .where('appStatus', '==', status)
+    .get()
+
+  const users = query.docs
+    .map(doc => doc.data())
+    .filter(user => {
+      return user.review.wave == wave
+    })
+
+  if (users.length === 0) {
+    return undefined
+  } else {
+    return users[0]
+  }
+}
+
+Firestore.review = async (uuid, wave, score) => {
+  await fb
+    .collection('Users')
+    .doc(uuid)
+    .update({
+      appStatus: 'inReview',
+      review: {
+        wave,
+        longAnswerScore: score
+      }
+    })
+}
+
 /**
  * [LEGACY] Upload application review JSON
  */
