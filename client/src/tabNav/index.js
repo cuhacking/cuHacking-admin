@@ -19,10 +19,10 @@ const Tab = ({ label, path }) => (
 
 const TabNav = () => (
   <div id={styles.container}>
-    <Tab label='Home' path='/' />
+    {/* <Tab label='Home' path='/' />
     <Tab label='Users' path='/users' />
     <Tab label='Admittance' path='/admittance' />
-    <Tab label='Stats' path='/stats' />
+    <Tab label='Stats' path='/stats' /> */}
     <Tab label='Review' path='/review' />
   </div>
 )
