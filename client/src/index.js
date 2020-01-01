@@ -4,7 +4,7 @@ import { BrowserRouter, Route } from 'react-router-dom'
 
 import './index.css'
 import TabNav from './tabNav'
-import { Home, Users, Admittance, Stats } from 'pages'
+import { Home, Users, Admittance, Stats, Review } from 'pages'
 
 const App = () => {
   return (
@@ -12,9 +12,9 @@ const App = () => {
       <TabNav />
       <Route path='/' exact component={Home} />
       <Route path='/users' component={Users} />
+      <Route path='/review' component={Review} />
       <Route path='/admittance' component={Admittance} />
       <Route path='/stats' component={Stats} />
-      {/* <Route path='/applications' component={Applications} /> */}
     </BrowserRouter>
   )
 }

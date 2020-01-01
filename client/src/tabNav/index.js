@@ -23,6 +23,7 @@ const TabNav = () => (
     <Tab label='Users' path='/users' />
     <Tab label='Admittance' path='/admittance' />
     <Tab label='Stats' path='/stats' />
+    <Tab label='Review' path='/review' />
   </div>
 )
 
