@@ -135,57 +135,8 @@ Firestore.review = async (uuid, wave, score) => {
 }
 
 /**
- * [LEGACY] Upload application review JSON
+ * [DANGEROUS] Set a collection
  */
-Firestore.uploadApplications = async applications => {
-  logger.verbose('Starting batch')
-  let batch = fb.batch()
-
-  applications.forEach(app => {
-    let userRef = fb.collection('Users').doc(app.uid)
-    batch.update(userRef, {
-      review: {
-        wave: 1,
-        longAnswerScore: app.score
-      },
-      appStatus: 'inReview'
-    })
-  })
-
-  logger.verbose('Batch complete')
-  return batch.commit()
-
-  // let userRefs = []
-
-  // await fb.runTransaction(async t => {
-  //   const appDocs = applications.map(app => {
-  //     let ref = fb.collection('Users').doc(app.uid)
-  //     userRefs.push(ref)
-  //     return t.get(ref)
-  //   })
-
-  //   await Promise.all(appDocs)
-
-  //   appDocs.forEach((docPromise, i) => {
-  //     docPromise.then(doc => {
-  //       let oldApplication = doc.get('application')
-  //       let updatedApplication = {
-  //         ...oldApplication,
-  //         longAnswerScore: applications[i].score,
-  //         status: 'inReview'
-  //       }
-
-  //       t.update(userRefs[i], {
-  //         application: updatedApplication
-  //       })
-  //     })
-  //   })
-  // })
-
-  // logger.verbose('Transaction success!')
-}
-
-// Dangerous Action! Don't use
 // Firestore.setDocuments = async collection => {
 //   let batch = fb.batch()
 
@@ -194,4 +145,86 @@ Firestore.uploadApplications = async applications => {
 //     batch.set(docRef, doc)
 //   })
 //   return batch.commit()
+// }
+
+/**
+ * [DANGEROUS] Reformat the users collection
+ */
+// let nextColor = 0
+// const foodColors = ['red', 'blue', 'green', 'yellow']
+// Firestore.reformat = async users => {
+//   logger.verbose('Starting batch')
+//   let batch = fb.batch()
+
+//   users.forEach(user => {
+//     logger.debug(stringify(user.application.basicInfo))
+
+//     // This gives everyone a color, flattens the review object, moves the name to the top, and lowercase-ifies emails
+//     if (!user.color) {
+//       batch.update(fb.doc(`Users/${user.uid}`), {
+//         color: foodColors[nextColor],
+//         wave: user.review.wave,
+//         longAnswerScore: user.review.longAnswerScore || null,
+//         email: user.email.toLowerCase(),
+//         name: !(user.application.basicInfo.firstName == null || user.application.basicInfo.lastName == null)
+//           ? `${user.application.basicInfo.firstName.trim()} ${user.application.basicInfo.lastName.trim()}`
+//           : null
+//       })
+//     }
+//     nextColor = (nextColor + 1) % foodColors.length
+//   })
+
+//   logger.verbose('Batch complete')
+//   return batch.commit()
+// }
+
+/**
+ * [LEGACY] Upload application review JSON
+ */
+// Firestore.uploadApplications = async applications => {
+//   logger.verbose('Starting batch')
+//   let batch = fb.batch()
+
+//   applications.forEach(app => {
+//     let userRef = fb.collection('Users').doc(app.uid)
+//     batch.update(userRef, {
+//       review: {
+//         wave: 1,
+//         longAnswerScore: app.score
+//       },
+//       appStatus: 'inReview'
+//     })
+//   })
+
+//   logger.verbose('Batch complete')
+//   return batch.commit()
+
+//   // let userRefs = []
+
+//   // await fb.runTransaction(async t => {
+//   //   const appDocs = applications.map(app => {
+//   //     let ref = fb.collection('Users').doc(app.uid)
+//   //     userRefs.push(ref)
+//   //     return t.get(ref)
+//   //   })
+
+//   //   await Promise.all(appDocs)
+
+//   //   appDocs.forEach((docPromise, i) => {
+//   //     docPromise.then(doc => {
+//   //       let oldApplication = doc.get('application')
+//   //       let updatedApplication = {
+//   //         ...oldApplication,
+//   //         longAnswerScore: applications[i].score,
+//   //         status: 'inReview'
+//   //       }
+
+//   //       t.update(userRefs[i], {
+//   //         application: updatedApplication
+//   //       })
+//   //     })
+//   //   })
+//   // })
+
+//   // logger.verbose('Transaction success!')
 // }

@@ -94,7 +94,44 @@ UserController.getByUuid = async (req, res, next) => {
   }
 }
 
-// DANGEROUS
+/**
+ * [DANGEROUS] Apply changes to every user
+ */
+// UserController.runScript = async (req, res, next) => {
+//   try {
+//     logger.verbose('Getting all users...')
+//     const users = await Firestore.getCollection('Users')
+
+//     logger.verbose('Users retrieved, running script...')
+
+//     const CHUNK_SIZE = 400 // 500 is the max for firebase
+
+//     const chunks = users.reduce((resultArray, item, index) => {
+//       const chunkIndex = Math.floor(index / CHUNK_SIZE)
+
+//       if (!resultArray[chunkIndex]) {
+//         resultArray[chunkIndex] = [] // start a new chunk
+//       }
+
+//       resultArray[chunkIndex].push(item)
+//       return resultArray
+//     }, [])
+
+//     chunks.forEach(async chunk => {
+//       await Firestore.reformat(chunk)
+//     })
+
+//     logger.verbose('Script complete')
+//     return res.sendStatus(200)
+//   } catch (error) {
+//     logger.error('Error running script')
+//     next(error)
+//   }
+// }
+
+/**
+ * [DANGEROUS] Set the Users collection to a provided JSON
+ */
 // UserController.applyBackup = async (req, res) => {
 //   logger.verbose('Replacing Users with provided JSON')
 //   const { users } = req.body
