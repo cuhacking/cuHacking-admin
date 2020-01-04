@@ -35,8 +35,7 @@ const Review = () => {
         },
         body: JSON.stringify({
           uuid: application.uuid,
-          wave,
-          score
+          score: Number(score)
         })
       })
 

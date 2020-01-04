@@ -47,7 +47,7 @@ ApplicationController.getSubmittedAppication = async (req, res, next) => {
         logger.verbose('No more unreviewed applications in this wave')
         return res.status(404).send('No more unreviewed applications in this wave')
       } else {
-        logger.verbose('Application retrieved!')
+        logger.verbose(`Application retrieved: ${user.uid}`)
         return res.status(200).json({
           uuid: user.uid,
           accomplishmentStatement: user.application.skills.accomplishmentStatement,
@@ -63,10 +63,10 @@ ApplicationController.getSubmittedAppication = async (req, res, next) => {
 
 ApplicationController.reviewApplication = async (req, res, next) => {
   try {
-    const { uuid, score, wave } = req.body
+    const { uuid, score } = req.body
     logger.verbose(`Submitting review for user ${uuid}`)
 
-    await Firestore.review(uuid, wave, score)
+    await Firestore.review(uuid, score)
 
     logger.verbose('Review submitted!')
     return res.sendStatus(200)
@@ -81,15 +81,15 @@ ApplicationController.reviewApplication = async (req, res, next) => {
  * Success Codes: 200
  * Error codes: N/A
  */
-ApplicationController.upload = async (req, res, next) => {
-  try {
-    logger.verbose('Uploading reviewed applications...')
+// ApplicationController.upload = async (req, res, next) => {
+//   try {
+//     logger.verbose('Uploading reviewed applications...')
 
-    let applications = req.body[Object.keys(req.body)[0]]
-    Firestore.uploadApplications(applications)
-    return res.sendStatus(200)
-  } catch (error) {
-    logger.error('Failed to upload reviewed applications')
-    next(error)
-  }
-}
+//     let applications = req.body[Object.keys(req.body)[0]]
+//     Firestore.uploadApplications(applications)
+//     return res.sendStatus(200)
+//   } catch (error) {
+//     logger.error('Failed to upload reviewed applications')
+//     next(error)
+//   }
+// }

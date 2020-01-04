@@ -29,15 +29,29 @@ Firestore.getByEmail = async email => {
     .get()
 
   if (query.docs.length > 1) {
-    throw new Error({
-      message: 'Email matches more than one user.',
-      query: query.forEach(doc => doc.data())
-    })
+    // Should never happen
+    throw new Error('Email matches more than one user.')
   } else if (query.docs.length === 0) {
-    return
+    return undefined
   }
 
   return query.docs[0].data()
+}
+
+Firestore.optimizedQueryUsers = async constraints => {
+  let ref = fb.collection('Users')
+  constraints.forEach(
+    constraint =>
+      (ref = ref.where(
+        constraint.field,
+        '==',
+        constraint.field === 'appStatus' ? constraint.value : Number(constraint.value)
+      ))
+  )
+
+  const users = (await ref.get()).docs.map(doc => doc.data())
+
+  return users
 }
 
 Firestore.queryUsers = async constraints => {
@@ -85,10 +99,10 @@ Firestore.queryUsers = async constraints => {
         users = users.filter(user => user.application.terms.under18 === value)
         break
       case 'wave':
-        users = users.filter(user => user.review.wave == value)
+        users = users.filter(user => user.wave == value)
         break
       case 'longAnswerScore':
-        users = users.filter(user => user.review.longAnswerScore == value)
+        users = users.filter(user => user.longAnswerScore == value)
         break
     }
   })
@@ -106,13 +120,12 @@ Firestore.getByStatus = async (wave, status) => {
   const query = await fb
     .collection('Users')
     .where('appStatus', '==', status)
+    .where('wave', '==', Number(wave))
+    .limit(1)
     .get()
 
-  const users = query.docs
-    .map(doc => doc.data())
-    .filter(user => {
-      return user.review.wave == wave
-    })
+  const users = query.docs.map(doc => doc.data())
+  logger.debug(users.length)
 
   if (users.length === 0) {
     return undefined
@@ -121,71 +134,19 @@ Firestore.getByStatus = async (wave, status) => {
   }
 }
 
-Firestore.review = async (uuid, wave, score) => {
+Firestore.review = async (uuid, score) => {
   await fb
     .collection('Users')
     .doc(uuid)
     .update({
       appStatus: 'inReview',
-      review: {
-        wave,
-        longAnswerScore: score
-      }
+      longAnswerScore: Number(score)
     })
 }
 
 /**
- * [LEGACY] Upload application review JSON
+ * [DANGEROUS] Set a collection
  */
-Firestore.uploadApplications = async applications => {
-  logger.verbose('Starting batch')
-  let batch = fb.batch()
-
-  applications.forEach(app => {
-    let userRef = fb.collection('Users').doc(app.uid)
-    batch.update(userRef, {
-      review: {
-        wave: 1,
-        longAnswerScore: app.score
-      },
-      appStatus: 'inReview'
-    })
-  })
-
-  logger.verbose('Batch complete')
-  return batch.commit()
-
-  // let userRefs = []
-
-  // await fb.runTransaction(async t => {
-  //   const appDocs = applications.map(app => {
-  //     let ref = fb.collection('Users').doc(app.uid)
-  //     userRefs.push(ref)
-  //     return t.get(ref)
-  //   })
-
-  //   await Promise.all(appDocs)
-
-  //   appDocs.forEach((docPromise, i) => {
-  //     docPromise.then(doc => {
-  //       let oldApplication = doc.get('application')
-  //       let updatedApplication = {
-  //         ...oldApplication,
-  //         longAnswerScore: applications[i].score,
-  //         status: 'inReview'
-  //       }
-
-  //       t.update(userRefs[i], {
-  //         application: updatedApplication
-  //       })
-  //     })
-  //   })
-  // })
-
-  // logger.verbose('Transaction success!')
-}
-
-// Dangerous Action! Don't use
 // Firestore.setDocuments = async collection => {
 //   let batch = fb.batch()
 
@@ -194,4 +155,88 @@ Firestore.uploadApplications = async applications => {
 //     batch.set(docRef, doc)
 //   })
 //   return batch.commit()
+// }
+
+/**
+ * [DANGEROUS] Reformat the users collection
+ */
+// let nextColor = 0
+// const foodColors = ['red', 'blue', 'green', 'yellow']
+// Firestore.reformat = async users => {
+//   logger.verbose('Starting batch')
+//   let batch = fb.batch()
+
+//   users.forEach(user => {
+//     // This gives everyone a color, flattens the review object, moves the name to the top, and lowercase-ifies emails
+//     // if (!user.color) {
+//     //   batch.update(fb.doc(`Users/${user.uid}`), {
+//     //     color: foodColors[nextColor],
+//     //     wave: user.review.wave,
+//     //     longAnswerScore: user.review.longAnswerScore || null,
+//     //     email: user.email.toLowerCase(),
+//     //     name: !(user.application.basicInfo.firstName == null || user.application.basicInfo.lastName == null)
+//     //       ? `${user.application.basicInfo.firstName.trim()} ${user.application.basicInfo.lastName.trim()}`
+//     //       : null
+//     //   })
+//     //   nextColor = (nextColor + 1) % foodColors.length
+//     // }
+
+//     batch.update(fb.doc(`Users/${user.uid}`), {
+//       longAnswerScore: Number(user.longAnswerScore)
+//     })
+//   })
+
+//   logger.verbose('Batch complete')
+//   return batch.commit()
+// }
+
+/**
+ * [LEGACY] Upload application review JSON
+ */
+// Firestore.uploadApplications = async applications => {
+//   logger.verbose('Starting batch')
+//   let batch = fb.batch()
+
+//   applications.forEach(app => {
+//     let userRef = fb.collection('Users').doc(app.uid)
+//     batch.update(userRef, {
+//       review: {
+//         wave: 1,
+//         longAnswerScore: app.score
+//       },
+//       appStatus: 'inReview'
+//     })
+//   })
+
+//   logger.verbose('Batch complete')
+//   return batch.commit()
+
+//   // let userRefs = []
+
+//   // await fb.runTransaction(async t => {
+//   //   const appDocs = applications.map(app => {
+//   //     let ref = fb.collection('Users').doc(app.uid)
+//   //     userRefs.push(ref)
+//   //     return t.get(ref)
+//   //   })
+
+//   //   await Promise.all(appDocs)
+
+//   //   appDocs.forEach((docPromise, i) => {
+//   //     docPromise.then(doc => {
+//   //       let oldApplication = doc.get('application')
+//   //       let updatedApplication = {
+//   //         ...oldApplication,
+//   //         longAnswerScore: applications[i].score,
+//   //         status: 'inReview'
+//   //       }
+
+//   //       t.update(userRefs[i], {
+//   //         application: updatedApplication
+//   //       })
+//   //     })
+//   //   })
+//   // })
+
+//   // logger.verbose('Transaction success!')
 // }

@@ -38,7 +38,7 @@ const Admittance = () => {
 
     setLoading(true)
     const response = await fetch(
-      `${window.location.origin}/api/users?appStatus=inReview&wave=${wave}&under18=${under18}&longAnswerScore=${score}`
+      `${window.location.origin}/api/users?appStatus=inReview&wave=${wave}&longAnswerScore=${score}`
     )
     const { users } = await response.json()
 
@@ -99,7 +99,7 @@ const Admittance = () => {
             Admit all
           </button>
           <form onSubmit={makeQuery} style={{ display: 'flex', flexDirection: 'column', margin: '20px 0 50px 0' }}>
-            <label style={{ margin: '5px 0' }}>
+            {/* <label style={{ margin: '5px 0' }}>
               <input
                 onChange={event => setUnder18(event.target.checked)}
                 name='under18'
@@ -107,7 +107,7 @@ const Admittance = () => {
                 checked={under18}
               />
               under 18
-            </label>
+            </label> */}
             <label style={{ margin: '5px 0' }}>
               wave:
               <input
