@@ -3,8 +3,12 @@ const Firestore = require('../model/firestore.js')
 
 const UserController = module.exports
 
+const optimizedValidQueryFields = ['appStatus', 'wave', 'longAnswerScore']
+
 const validQueryFields = [
   'appStatus',
+  'wave',
+  'longAnswerScore',
   'gender', // basicInfo
   'cityOfOrigin', // personalInfo
   'glutenFree', // dietaryRestrictions
@@ -15,10 +19,59 @@ const validQueryFields = [
   'vegetarian',
   'school',
   'wantsShuttle',
-  'under18', // terms
-  'wave', // review
-  'longAnswerScore'
+  'under18' // terms
 ]
+
+UserController.optimizedGetByQuery = async (req, res, next) => {
+  try {
+    const fields = Object.keys(req.query)
+
+    if (fields.length === 0) {
+      logger.verbose('Getting all users...')
+      const users = await Firestore.getCollection('Users')
+
+      logger.verbose('Users retrieved')
+      res.status(200).send({ users })
+    } else {
+      if (req.query.email) {
+        logger.verbose(`Getting user with email ${req.query.email}`)
+        const user = await Firestore.getByEmail(req.query.email)
+
+        if (!user) {
+          logger.warn(`User with email ${email} not found`)
+          res.sendStatus(404)
+        }
+
+        logger.verbose('User retrieved!')
+        return res.status(200).send({ user })
+      } else {
+        logger.verbose('Querying for users...')
+
+        // Check if all the fields are queryable
+        fields.forEach(field => {
+          if (!optimizedValidQueryFields.includes(field)) {
+            throw res.status(400).send({ message: `Invalid query field '${field}'` })
+          }
+        })
+
+        const users = await Firestore.optimizedQueryUsers(
+          fields.map(field => {
+            return {
+              field,
+              value: req.query[field]
+            }
+          })
+        )
+
+        logger.verbose('Query complete')
+        return res.status(200).send({ users })
+      }
+    }
+  } catch (error) {
+    logger.error('Error retrieving users')
+    next(error)
+  }
+}
 
 UserController.getByQuery = async (req, res, next) => {
   try {

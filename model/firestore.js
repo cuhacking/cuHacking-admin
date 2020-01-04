@@ -38,6 +38,22 @@ Firestore.getByEmail = async email => {
   return query.docs[0].data()
 }
 
+Firestore.optimizedQueryUsers = async constraints => {
+  let ref = fb.collection('Users')
+  constraints.forEach(
+    constraint =>
+      (ref = ref.where(
+        constraint.field,
+        '==',
+        constraint.field === 'appStatus' ? constraint.value : Number(constraint.value)
+      ))
+  )
+
+  const users = (await ref.get()).docs.map(doc => doc.data())
+
+  return users
+}
+
 Firestore.queryUsers = async constraints => {
   // Getting all users
   let users = (await fb.collection('Users').get()).docs.map(doc => doc.data())
@@ -166,7 +182,7 @@ Firestore.review = async (uuid, score) => {
 //     // }
 
 //     batch.update(fb.doc(`Users/${user.uid}`), {
-//       wave: Number(user.wave)
+//       longAnswerScore: Number(user.longAnswerScore)
 //     })
 //   })
 
