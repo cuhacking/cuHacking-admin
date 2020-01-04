@@ -29,12 +29,10 @@ Firestore.getByEmail = async email => {
     .get()
 
   if (query.docs.length > 1) {
-    throw new Error({
-      message: 'Email matches more than one user.',
-      query: query.forEach(doc => doc.data())
-    })
+    // Should never happen
+    throw new Error('Email matches more than one user.')
   } else if (query.docs.length === 0) {
-    return
+    return undefined
   }
 
   return query.docs[0].data()
@@ -85,10 +83,10 @@ Firestore.queryUsers = async constraints => {
         users = users.filter(user => user.application.terms.under18 === value)
         break
       case 'wave':
-        users = users.filter(user => user.review.wave == value)
+        users = users.filter(user => user.wave == value)
         break
       case 'longAnswerScore':
-        users = users.filter(user => user.review.longAnswerScore == value)
+        users = users.filter(user => user.longAnswerScore == value)
         break
     }
   })
@@ -106,13 +104,12 @@ Firestore.getByStatus = async (wave, status) => {
   const query = await fb
     .collection('Users')
     .where('appStatus', '==', status)
+    .where('wave', '==', Number(wave))
+    .limit(1)
     .get()
 
-  const users = query.docs
-    .map(doc => doc.data())
-    .filter(user => {
-      return user.review.wave == wave
-    })
+  const users = query.docs.map(doc => doc.data())
+  logger.debug(users.length)
 
   if (users.length === 0) {
     return undefined
@@ -121,16 +118,13 @@ Firestore.getByStatus = async (wave, status) => {
   }
 }
 
-Firestore.review = async (uuid, wave, score) => {
+Firestore.review = async (uuid, score) => {
   await fb
     .collection('Users')
     .doc(uuid)
     .update({
       appStatus: 'inReview',
-      review: {
-        wave,
-        longAnswerScore: score
-      }
+      longAnswerScore: Number(score)
     })
 }
 
@@ -157,21 +151,23 @@ Firestore.review = async (uuid, wave, score) => {
 //   let batch = fb.batch()
 
 //   users.forEach(user => {
-//     logger.debug(stringify(user.application.basicInfo))
-
 //     // This gives everyone a color, flattens the review object, moves the name to the top, and lowercase-ifies emails
-//     if (!user.color) {
-//       batch.update(fb.doc(`Users/${user.uid}`), {
-//         color: foodColors[nextColor],
-//         wave: user.review.wave,
-//         longAnswerScore: user.review.longAnswerScore || null,
-//         email: user.email.toLowerCase(),
-//         name: !(user.application.basicInfo.firstName == null || user.application.basicInfo.lastName == null)
-//           ? `${user.application.basicInfo.firstName.trim()} ${user.application.basicInfo.lastName.trim()}`
-//           : null
-//       })
-//     }
-//     nextColor = (nextColor + 1) % foodColors.length
+//     // if (!user.color) {
+//     //   batch.update(fb.doc(`Users/${user.uid}`), {
+//     //     color: foodColors[nextColor],
+//     //     wave: user.review.wave,
+//     //     longAnswerScore: user.review.longAnswerScore || null,
+//     //     email: user.email.toLowerCase(),
+//     //     name: !(user.application.basicInfo.firstName == null || user.application.basicInfo.lastName == null)
+//     //       ? `${user.application.basicInfo.firstName.trim()} ${user.application.basicInfo.lastName.trim()}`
+//     //       : null
+//     //   })
+//     //   nextColor = (nextColor + 1) % foodColors.length
+//     // }
+
+//     batch.update(fb.doc(`Users/${user.uid}`), {
+//       wave: Number(user.wave)
+//     })
 //   })
 
 //   logger.verbose('Batch complete')
