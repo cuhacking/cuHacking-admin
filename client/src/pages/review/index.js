@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import ReactJson from 'react-json-view'
 import { Page } from 'components'
 
 const Review = () => {
@@ -68,7 +67,7 @@ const Review = () => {
             <input
               type='number'
               min={1}
-              max={3}
+              max={4}
               name='wave'
               value={wave}
               onChange={event => setWave(event.target.value)}

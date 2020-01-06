@@ -115,7 +115,7 @@ const Admittance = () => {
                 name='wave'
                 type='number'
                 min={1}
-                max={3}
+                max={4}
                 value={wave}
               />
             </label>

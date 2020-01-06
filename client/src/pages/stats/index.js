@@ -191,6 +191,35 @@ const Stats = () => {
                 <p>withdrawn: {ageFilter(waveFilter(3)(genderFilter('Other')(withdrawn))).length}</p>
               </div>
             </div>
+            <div style={{ width: 50 }} />
+            <div>
+              <h2>Wave 4</h2>
+              <p>total: {ageFilter(waveFilter(4)(total)).length}</p>
+              <div>
+                <h3>Male</h3>
+                <p>submitted: {ageFilter(waveFilter(4)(genderFilter('Male')(submitted))).length}</p>
+                <p>in review: {ageFilter(waveFilter(4)(genderFilter('Male')(inReview))).length}</p>
+                <p>accepted: {ageFilter(waveFilter(4)(genderFilter('Male')(accepted))).length}</p>
+                <p>attending: {ageFilter(waveFilter(4)(genderFilter('Male')(attending))).length}</p>
+                <p>withdrawn: {ageFilter(waveFilter(4)(genderFilter('Male')(withdrawn))).length}</p>
+              </div>
+              <div>
+                <h3>Female</h3>
+                <p>submitted: {ageFilter(waveFilter(4)(genderFilter('Female')(submitted))).length}</p>
+                <p>in review: {ageFilter(waveFilter(4)(genderFilter('Female')(inReview))).length}</p>
+                <p>accepted: {ageFilter(waveFilter(4)(genderFilter('Female')(accepted))).length}</p>
+                <p>attending: {ageFilter(waveFilter(4)(genderFilter('Female')(attending))).length}</p>
+                <p>withdrawn: {ageFilter(waveFilter(4)(genderFilter('Female')(withdrawn))).length}</p>
+              </div>
+              <div>
+                <h3>Other</h3>
+                <p>submitted: {ageFilter(waveFilter(4)(genderFilter('Other')(submitted))).length}</p>
+                <p>in review: {ageFilter(waveFilter(4)(genderFilter('Other')(inReview))).length}</p>
+                <p>accepted: {ageFilter(waveFilter(4)(genderFilter('Other')(accepted))).length}</p>
+                <p>attending: {ageFilter(waveFilter(4)(genderFilter('Other')(attending))).length}</p>
+                <p>withdrawn: {ageFilter(waveFilter(4)(genderFilter('Other')(withdrawn))).length}</p>
+              </div>
+            </div>
           </div>
         </>
       )}

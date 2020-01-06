@@ -99,7 +99,6 @@ const Users = () => {
       //   theRest: 'yo'
       // }
       setName(`${userObject.application.basicInfo.firstName} ${userObject.application.basicInfo.lastName}`)
-      userObject.application = '<redacted>'
       setUser(userObject)
     } finally {
       setLoading(false)
