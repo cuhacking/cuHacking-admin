@@ -37,12 +37,17 @@ const Admittance = () => {
     if (event) event.preventDefault()
 
     setLoading(true)
-    const response = await fetch(
-      `${window.location.origin}/api/users?appStatus=inReview&wave=${wave}&longAnswerScore=${score}`
-    )
-    const { users } = await response.json()
+    // const response = await fetch(
+    //   `${window.location.origin}/api/users?appStatus=inReview&wave=${wave}&longAnswerScore=${score}`
+    // )
+    // const { users } = await response.json()
+    const response1 = await fetch(`${window.location.origin}/api/users?appStatus=inReview`)
+    const { users: reviewedUsers } = await response1.json()
 
-    setUsers(users)
+    const response2 = await fetch(`${window.location.origin}/api/users?appStatus=submitted`)
+    const { users: submittedUsers } = await response2.json()
+
+    setUsers([...reviewedUsers, ...submittedUsers])
     setLoading(false)
   }
 
@@ -107,7 +112,7 @@ const Admittance = () => {
                 checked={under18}
               />
               under 18
-            </label> */}
+            </label>
             <label style={{ margin: '5px 0' }}>
               wave:
               <input
@@ -129,7 +134,7 @@ const Admittance = () => {
                 max={5}
                 value={score}
               />
-            </label>
+            </label> */}
             <button type='submit'>Search</button>
           </form>
           {loading ? (
@@ -137,7 +142,7 @@ const Admittance = () => {
           ) : (
             <>
               <h3>Total: {users.length}</h3>
-              <p>Male: {genderFilter('Male').length}</p>
+              {/* <p>Male: {genderFilter('Male').length}</p>
               <div style={{ margin: '0 0 15px' }}>
                 <input
                   onChange={event => setAdmitCapM(event.target.value)}
@@ -190,7 +195,7 @@ const Admittance = () => {
                 >
                   Admit
                 </button>
-              </div>
+              </div> */}
             </>
           )}
         </>
