@@ -6,7 +6,7 @@ const SearchForm = ({ search, setEmail }) => (
   <form onSubmit={search}>
     <p>
       Email:
-      <input name='input' onChange={event => setEmail(event.target.value || '')} />
+      <input name='input' onChange={event => setEmail(event.target.value.toLowerCase() || '')} />
     </p>
     <button type='submit'>Search</button>
   </form>
@@ -55,7 +55,6 @@ const UserView = ({ user, name, clearUser, reloadUser }) => {
   return (
     <>
       <h1>{name}</h1>
-      <ReactJson src={user} name='user' theme='monokai' />
       {loading ? (
         <p>loading...</p>
       ) : (
@@ -63,14 +62,12 @@ const UserView = ({ user, name, clearUser, reloadUser }) => {
           <button type='button' onClick={admitUser} disabled={!canAdmit}>
             Admit to event
           </button>
-          <button type='button' disabled>
-            Print Badge
-          </button>
           <button type='button' onClick={clearUser}>
             Get new user
           </button>
         </div>
       )}
+      <ReactJson src={user} name='user' theme='monokai' />
     </>
   )
 }
